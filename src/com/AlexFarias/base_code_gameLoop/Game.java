@@ -16,19 +16,44 @@ public class Game implements Runnable{
 		isRunning = true;
 	}
 	
+	public synchronized void stop() {
+		
+	}
+	
 	public void tick() {
-		System.out.println("tick");
+		//System.out.println("tick");
 	}
 	
 	public void render() {
-		System.out.println("render");
+		//System.out.println("render");
 	}
 	
 	@Override
 	public void run() {
 		while(isRunning) {
-			tick();
-			render();
+			long lastTime = System.nanoTime();
+			double amountOfTicks = 60.0;
+			double ns = 1000000000 / amountOfTicks;
+			double delta = 0;
+			int frames = 0;
+			double timer = System.currentTimeMillis();
+			while(isRunning) {
+				long now = System.nanoTime();
+				delta+= (now - lastTime) / ns;
+				lastTime = now;
+				if(delta >= 1) {
+					tick();
+					render();
+					frames++;
+					delta--;
+				}
+				
+				if(System.currentTimeMillis() - timer >= 1000) {
+					System.out.println("FPS: "+frames);
+					frames = 0;
+					timer+=1000;
+				}
+			}
 			
 			//Maneira fajuta
 			/*
